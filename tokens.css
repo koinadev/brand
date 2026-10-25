@@ -1,0 +1,20 @@
+/* Koina marka token'ları. Kaynak: social/scripts/palette.ts — ikisini birlikte güncelle. */
+:root {
+  --koina-pine: #173229;
+  --koina-moss: #2f7a55;
+  --koina-sprout: #9ed9a8;
+  --koina-pollen: #f2b33d;
+  --koina-marble: #f2f5f1;
+  --koina-mist: #d5dfd8;
+  --koina-pine-deep: #0e1d18;
+  --koina-moss-on-dark: #4fb37e;
+  --koina-marble-on-dark: #e6eee8;
+
+  --koina-font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --koina-font-body: 'Instrument Sans', system-ui, sans-serif;
+
+  /* Hücre köşe oranı: boyutun %22'si. Türetilmiş yarıçaplar: */
+  --koina-radius-sm: 6px;
+  --koina-radius-md: 14px;
+  --koina-radius-lg: 22px;
+}
