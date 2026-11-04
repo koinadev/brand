@@ -13,8 +13,8 @@ const launch = {
 const live = {
   format: 'Kodla Buluşma',
   title: 'Gerçek bir issue’yu canlı kapatıyoruz',
-  date: '17 Kasım Salı',
-  time: '21:00',
+  date: '21 Kasım Cumartesi',
+  time: '20:00',
 };
 
 export const specs: Spec[] = [
@@ -24,14 +24,14 @@ export const specs: Spec[] = [
   { group: 'profile', name: 'x-header', kind: 'banner', size: 'x-header', data: { tagline: 'Usta ile çırak aynı commit geçmişinde.' } },
   { group: 'profile', name: 'linkedin-banner', kind: 'banner', size: 'linkedin-banner', data: { tagline: 'Açık kaynakta birlikte çalışarak kurulan network.' } },
   { group: 'profile', name: 'linkedin-company-cover', kind: 'banner', size: 'linkedin-company-cover', data: { tagline: 'Aynı repoda buluşalım.' } },
-  { group: 'profile', name: 'yt-banner', kind: 'banner', size: 'yt-banner', theme: 'dark', data: { tagline: 'Her Salı 21:00 canlı kodlama.' } },
+  { group: 'profile', name: 'yt-banner', kind: 'banner', size: 'yt-banner', theme: 'dark', data: { tagline: 'Her Cumartesi 20:00 canlı kodlama.' } },
   { group: 'profile', name: 'discord-splash', kind: 'banner', size: 'discord-splash', theme: 'dark', data: { tagline: 'Yayın sohbeti burada. Gel, tanış.' } },
   { group: 'profile', name: 'og-default', kind: 'announce', size: 'og', data: { title: 'Aynı repoda buluşalım.', body: launch.body } },
 
   // ---- lansman duyurusu, tüm gönderi boyutları
   { group: 'launch', name: 'ig-square', kind: 'announce', size: 'ig-square', data: launch },
   { group: 'launch', name: 'ig-portrait', kind: 'announce', size: 'ig-portrait', data: launch },
-  { group: 'launch', name: 'story', kind: 'announce', size: 'story', theme: 'dark', data: { ...launch, meta: [{ label: 'İlk yayın', value: 'Salı 21:00' }] } },
+  { group: 'launch', name: 'story', kind: 'announce', size: 'story', theme: 'dark', data: { ...launch, meta: [{ label: 'İlk yayın', value: 'Cumartesi 20:00' }] } },
   { group: 'launch', name: 'linkedin-square', kind: 'announce', size: 'linkedin-square', data: launch },
   { group: 'launch', name: 'linkedin-link', kind: 'announce', size: 'linkedin-link', data: launch },
   { group: 'launch', name: 'x-post', kind: 'announce', size: 'x-post', theme: 'dark', data: launch },
@@ -113,19 +113,19 @@ export const specs: Spec[] = [
       title: 'Koina nasıl başlıyor?',
       subtitle: 'Sıra sıra: önce görünür iş, sonra birlikte üretim.',
       cards: [
-        { heading: 'Şimdi: yayın ve kesit', body: 'Her Salı 21:00 canlı kod yazıyoruz. En öğretici anlar kısa kesit olarak buraya geliyor.' },
+        { heading: 'Şimdi: yayın ve kesit', body: 'Her Cumartesi 20:00 canlı kod yazıyoruz. En öğretici anlar kısa kesit olarak buraya geliyor.' },
         { heading: 'Sonra: konuk ustalar', body: 'Deneyimli geliştiriciler yayına gelir, gerçek PR’ları birlikte inceleriz.' },
         { heading: 'Sonra: topluluk', body: 'Eşli çalışma saatleri, fikir havuzu ve ilk açık kaynak katkıların.' },
         { heading: 'Sonra: ilk proje', body: 'Küçük bir ekiple bir projeyi baştan sona açıkta çıkarırız. Sezonlar ondan sonra.' },
       ],
-      cta: { title: 'İlk adım kolay', body: 'YouTube’da abone ol, Salı 21:00’de sohbete gel.' },
+      cta: { title: 'İlk adım kolay', body: 'YouTube’da abone ol, Cumartesi 20:00’de sohbete gel.' },
     },
   },
 
   // ---- yayın ekranları (OBS)
   { group: 'stream', name: 'starting', kind: 'stream', size: 'stream', theme: 'dark', data: { state: 'starting', title: 'Kodla Buluşma', subtitle: 'Sohbete yaz: bugün neyi çözüyoruz?' } },
   { group: 'stream', name: 'break', kind: 'stream', size: 'stream', theme: 'dark', data: { state: 'break', title: '5 dakikaya dönüyoruz', subtitle: 'discord.gg/koinadev' } },
-  { group: 'stream', name: 'ending', kind: 'stream', size: 'stream', theme: 'dark', data: { state: 'ending', title: 'Bir sonraki yayın Salı 21:00', subtitle: 'Kayıt ve kod: koina.dev' } },
-  { group: 'stream', name: 'offline', kind: 'stream', size: 'stream', theme: 'light', data: { state: 'offline', title: 'Her Salı 21:00', subtitle: 'Kodla Buluşma' } },
+  { group: 'stream', name: 'ending', kind: 'stream', size: 'stream', theme: 'dark', data: { state: 'ending', title: 'Bir sonraki yayın Cumartesi 20:00', subtitle: 'Kayıt ve kod: koina.dev' } },
+  { group: 'stream', name: 'offline', kind: 'stream', size: 'stream', theme: 'light', data: { state: 'offline', title: 'Her Cumartesi 20:00', subtitle: 'Kodla Buluşma' } },
   { group: 'stream', name: 'lower-third', kind: 'lowerThird', size: 'stream', data: { name: 'Konuk adı', role: 'Usta · Proje adı' } },
 ];
