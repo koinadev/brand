@@ -24,7 +24,7 @@ export const specs: Spec[] = [
   { group: 'profile', name: 'x-header', kind: 'banner', size: 'x-header', data: { tagline: 'Geliştiricilerle fikir sahipleri aynı repoda.', align: 'end' } },
   { group: 'profile', name: 'linkedin-banner', kind: 'banner', size: 'linkedin-banner', data: { tagline: 'Geliştiricilerle fikir sahiplerini buluşturan topluluk.', align: 'end' } },
   { group: 'profile', name: 'linkedin-company-cover', kind: 'banner', size: 'linkedin-company-cover', data: { tagline: 'Geliştiricilerle fikir sahiplerini buluşturan topluluk.', align: 'end' } },
-  { group: 'profile', name: 'yt-banner', kind: 'banner', size: 'yt-banner', theme: 'dark', data: { tagline: 'Her Cumartesi 20:00 canlı kodlama.' } },
+  { group: 'profile', name: 'yt-banner', kind: 'banner', size: 'yt-banner', theme: 'dark', data: { tagline: 'Her Cumartesi 20:00 canlı: kod, konular ve fikirler.' } },
   { group: 'profile', name: 'discord-splash', kind: 'banner', size: 'discord-splash', theme: 'dark', data: { tagline: 'Yayın sohbeti burada. Gel, tanış.' } },
   { group: 'profile', name: 'og-default', kind: 'announce', size: 'og', data: { title: 'Aynı repoda buluşalım.', body: launch.body } },
 
