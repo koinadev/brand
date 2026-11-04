@@ -34,7 +34,7 @@ function htmlFor(s: Pick<Spec, 'kind' | 'size' | 'theme' | 'data'>): string[] {
   return [fn(s.data as never, ctx)];
 }
 
-type Job = { html: string; out: string; w: number; h: number; transparent: boolean };
+type Job = { html: string; out: string; w: number; h: number; scale?: number; transparent: boolean };
 const jobs: Job[] = [];
 
 if (args.kind) {
@@ -63,16 +63,18 @@ if (args.kind) {
 const tmp = resolve(here, '.cache');
 mkdirSync(tmp, { recursive: true });
 const browser = await chromium.launch();
-const pageObj = await browser.newPage();
+const pages = new Map<number, Awaited<ReturnType<typeof browser.newPage>>>();
+const pageFor = async (scale: number) => pages.get(scale) ?? pages.set(scale, await browser.newPage({ deviceScaleFactor: scale })).get(scale)!;
 for (const [i, j] of jobs.entries()) {
   // file:// üzerinden açıyoruz ki node_modules'taki font CSS'leri (file:// URL) yüklenebilsin.
   const file = resolve(tmp, `job-${i}.html`);
   writeFileSync(file, j.html);
+  const pageObj = await pageFor(j.scale ?? 1);
   await pageObj.setViewportSize({ width: j.w, height: j.h });
   await pageObj.goto(pathToFileURL(file).href);
   await pageObj.evaluate(() => (window as unknown as { __fit: () => Promise<void> }).__fit());
   mkdirSync(dirname(j.out), { recursive: true });
   await pageObj.screenshot({ path: j.out, omitBackground: j.transparent });
-  console.log(`✓ ${j.out.replace(here + '/', '')}  ${j.w}×${j.h}`);
+  console.log(`✓ ${j.out.replace(here + '/', '')}  ${j.w * (j.scale ?? 1)}×${j.h * (j.scale ?? 1)}`);
 }
 await browser.close();

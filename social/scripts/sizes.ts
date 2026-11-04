@@ -1,6 +1,7 @@
 // Kanal boyutları. plan/04-icerik-stratejisi.md tablosuyla aynı tutulmalı.
 // `safe`: platformun kırptığı alanlar için içerik kutusu (px, kenarlardan içeri).
-export type Size = { w: number; h: number; label: string; safe?: { x: number; y: number } };
+// `scale`: platform görseli küçültürken bulanıklaşmasın diye 2× piksel yoğunluğunda üretilir (dosya w×scale boyutunda olur).
+export type Size = { w: number; h: number; label: string; safe?: { x: number; y: number }; scale?: number };
 
 export const sizes = {
   'ig-square': { w: 1080, h: 1080, label: 'Instagram kare gönderi' },
@@ -8,10 +9,10 @@ export const sizes = {
   story: { w: 1080, h: 1920, label: 'Story / Reel / Shorts / TikTok kapağı', safe: { x: 0, y: 250 } },
   'linkedin-square': { w: 1200, h: 1200, label: 'LinkedIn kare gönderi' },
   'linkedin-link': { w: 1200, h: 627, label: 'LinkedIn bağlantı görseli' },
-  'linkedin-company-cover': { w: 1128, h: 191, label: 'LinkedIn şirket sayfası kapağı' },
-  'linkedin-banner': { w: 1584, h: 396, label: 'LinkedIn kişisel profil kapağı', safe: { x: 0, y: 0 } },
+  'linkedin-company-cover': { w: 1128, h: 191, label: 'LinkedIn şirket sayfası kapağı', scale: 2 },
+  'linkedin-banner': { w: 1584, h: 396, label: 'LinkedIn kişisel profil kapağı', safe: { x: 0, y: 0 }, scale: 2 },
   'x-post': { w: 1600, h: 900, label: 'X gönderi görseli' },
-  'x-header': { w: 1500, h: 500, label: 'X profil kapağı', safe: { x: 0, y: 60 } },
+  'x-header': { w: 1500, h: 500, label: 'X profil kapağı', safe: { x: 0, y: 60 }, scale: 2 },
   'yt-thumbnail': { w: 1280, h: 720, label: 'YouTube kapak görseli' },
   // YouTube kanal kapağı: her cihazda görünen güvenli alan 1546×423, ortada.
   'yt-banner': { w: 2560, h: 1440, label: 'YouTube kanal kapağı', safe: { x: 507, y: 508 } },

@@ -191,7 +191,8 @@ export function carousel(d: CarouselData, c: Ctx): string[] {
 
 // ------------------------------------------------------------------ profil kapakları (banner)
 
-export type BannerData = { tagline: string };
+// `align: 'end'`: profil fotoğrafının sol alt köşeye bindiği kapaklarda (X, LinkedIn) logo ve slogan sağa, motif sola geçer.
+export type BannerData = { tagline: string; align?: 'end' };
 export const banner: Kind<BannerData> = (d, { size, theme }) => {
   const safe = size.safe ?? { x: 0, y: 0 };
   const innerH = size.h - safe.y * 2;
@@ -209,8 +210,8 @@ export const banner: Kind<BannerData> = (d, { size, theme }) => {
     seed: hash(d.tagline),
     footer: false,
     // Şerit kapaklarda motif yalnız sağ uçta kalır; yazı temiz zemine düşer.
-    motif: flat ? { focus: [1, 0.5], spread: 1.25 } : { focus: [1, 0], spread: 0.62 },
-    body: `<div class="banner" style="padding:${safe.y}px calc(${safe.x}px + var(--h) * 0.1);gap:${Math.round(wmH)}px;--tag-size:${Math.round(wmH * (flat ? 0.6 : 0.48))}px">
+    motif: d.align === 'end' ? { focus: [0, 0.5], spread: shapeOf(size) === 'strip' ? 1.25 : 0.75 } : flat ? { focus: [1, 0.5], spread: 1.25 } : { focus: [1, 0], spread: 0.62 },
+    body: `<div class="banner" style="${d.align === 'end' ? 'justify-content:flex-end;' : ''}padding:${safe.y}px calc(${safe.x}px + var(--h) * 0.1);gap:${Math.round(wmH)}px;--tag-size:${Math.round(wmH * (flat ? 0.6 : 0.48))}px">
       <div class="wm" style="height:${wmH}px">${wm}</div>
       <div class="tag" style="max-width:${Math.round(flat ? size.w * 0.3 : (size.w - safe.x * 2) * 0.42)}px">${esc(d.tagline)}</div></div>`,
   });
