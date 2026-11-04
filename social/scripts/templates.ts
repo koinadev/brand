@@ -1,15 +1,9 @@
 // Sosyal görsel şablonları. Her şablon bir HTML gövdesi döndürür; çerçeve, fontlar, katkı
-// ızgarası motifi ve metin sığdırma `page()` içinde ortaktır. Ölçüler `--u` birimiyle yazılır
+// ızgarası motifi, el çizimi vurgular ve metin sığdırma `page()` içinde ortaktır. Ölçüler `--u` birimiyle yazılır
 // (kısa kenarın %1'i), böylece aynı şablon 800×320'den 2560×1440'a kadar her boyutta çalışır.
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { readFileSync } from 'node:fs';
-import { palette as P } from './palette.ts';
+import { pathToFileURL } from 'node:url';
+import { palette as P, fonts as F, logoSvg } from './palette.ts';
 import type { Size } from './sizes.ts';
-
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const fontUrl = (f: string) => pathToFileURL(resolve(root, 'brand/fonts', f)).href;
-const markSvg = (name: string) => readFileSync(resolve(root, 'brand/logo', name), 'utf8');
 
 export type Theme = 'light' | 'dark';
 export type Shape = 'square' | 'portrait' | 'tall' | 'landscape' | 'wide' | 'strip';
@@ -59,9 +53,12 @@ export function motif(w: number, h: number, o: MotifOpts) {
   const short = Math.min(w, h);
   const fx = o.focus[0] * w;
   const fy = o.focus[1] * h;
-  const empty = o.theme === 'dark' ? 'rgba(230,238,232,0.07)' : 'rgba(23,50,41,0.06)';
-  const levels = [empty, o.theme === 'dark' ? '#2C5A45' : P.mist, P.sprout, o.theme === 'dark' ? P.mossOnDark : P.moss, P.pollen];
-  const rx = Math.round(o.cell * 0.22);
+  // Seviyeler: boş, lila, soluk mavi, mavi, sarı. Sarı en seyrek olanı: ustaların katkısı.
+  const levels =
+    o.theme === 'dark'
+      ? ['rgba(251,250,247,0.06)', 'rgba(140,151,240,0.14)', 'rgba(51,65,196,0.6)', P.link, P.primary]
+      : ['rgba(27,31,59,0.05)', P.tint, 'rgba(51,65,196,0.35)', P.link, P.primary];
+  const rx = cellRadius(o.cell);
   const out: string[] = [];
   for (let c = 0; c < cols; c++) {
     for (let rr = 0; rr < rows; rr++) {
@@ -74,7 +71,7 @@ export function motif(w: number, h: number, o: MotifOpts) {
       if (heat > 0.25) lvl = 1;
       if (heat > 0.45) lvl = 2;
       if (heat > 0.68) lvl = 3;
-      if (heat > 0.92 && r() > 0.45) lvl = 4; // polen hücreleri seyrek: ustaların katkısı
+      if (heat > 0.92 && r() > 0.45) lvl = 4; // sarı hücreler seyrek
       const fade = d > 0.85 ? ` opacity="${(1 - (d - 0.85) / 0.3).toFixed(2)}"` : '';
       out.push(`<rect x="${x}" y="${y}" width="${o.cell}" height="${o.cell}" rx="${rx}" fill="${levels[lvl]}"${fade}/>`);
     }
@@ -82,12 +79,17 @@ export function motif(w: number, h: number, o: MotifOpts) {
   return `<svg class="motif" xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">${out.join('')}</svg>`;
 }
 
+/** Hücre köşesi sitedeki `--k-cell-radius-svg` oranıyla aynı (28 birimlik hücrede 7). */
+const cellRadius = (cell: number) => Math.round(cell * 0.25);
+
 /** Gerçek veriden katkı şeridi: her değer bir gün; 7 satır. */
 export function contributionStrip(values: number[], cell: number, theme: Theme) {
   const gap = Math.round(cell * 0.22);
   const max = Math.max(1, ...values);
-  const colors = [theme === 'dark' ? 'rgba(230,238,232,0.08)' : P.mist, P.sprout, theme === 'dark' ? P.mossOnDark : P.moss, P.pine];
-  if (theme === 'dark') colors[3] = P.pollen;
+  const colors =
+    theme === 'dark'
+      ? ['rgba(251,250,247,0.08)', 'rgba(140,151,240,0.45)', P.linkOnDark, P.primary]
+      : [P.line, P.linkOnDark, P.link, P.fg];
   const weeks = Math.ceil(values.length / 7);
   const w = weeks * (cell + gap) - gap;
   const h = 7 * (cell + gap) - gap;
@@ -95,10 +97,16 @@ export function contributionStrip(values: number[], cell: number, theme: Theme) 
     const lvl = v === 0 ? 0 : Math.min(3, Math.ceil((v / max) * 3));
     const x = Math.floor(i / 7) * (cell + gap);
     const y = (i % 7) * (cell + gap);
-    return `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="${Math.round(cell * 0.22)}" fill="${colors[lvl]}"/>`;
+    return `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="${cellRadius(cell)}" fill="${colors[lvl]}"/>`;
   });
   return `<svg class="strip-grid" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true">${rects.join('')}</svg>`;
 }
+
+// ---------------------------------------------------------------- el çizimi vurgular
+
+/** Nane yeşili kıvrım: başlık altına küçük bir el çizimi çizgi. */
+export const squiggle = () =>
+  `<svg class="squiggle" viewBox="0 0 120 16" aria-hidden="true"><path d="M3 10 C 13 2, 23 2, 33 9 S 53 16, 63 9 S 83 2, 93 9 S 110 14, 117 7" fill="none" stroke="${P.mint}" stroke-width="5" stroke-linecap="round"/></svg>`;
 
 // ---------------------------------------------------------------- ortak sayfa
 
@@ -137,49 +145,54 @@ export function page(o: PageOpts) {
           theme: o.theme,
           ...o.motif,
         });
+  const dark = o.theme === 'dark';
   const footer =
     o.footer === false
       ? ''
-      : `<footer class="foot"><span class="foot-mark">${markSvg('koina-mark-solid.svg')}</span><span>koina.dev</span><span class="foot-handle">@koinadev</span></footer>`;
+      : `<footer class="foot"><span class="foot-mark">${logoSvg('mark', dark)}</span><span>koina.dev</span><span class="foot-handle">@koinadev</span></footer>`;
 
-  return `<!doctype html><html lang="tr"><head><meta charset="utf-8"><style>
-@font-face { font-family: 'Bricolage'; src: url('${fontUrl('BricolageGrotesque.ttf')}') format('truetype'); font-weight: 200 800; font-stretch: 75% 100%; }
-@font-face { font-family: 'Instrument'; src: url('${fontUrl('InstrumentSans.ttf')}') format('truetype'); font-weight: 400 700; font-stretch: 75% 100%; }
+  return `<!doctype html><html lang="tr"><head><meta charset="utf-8">${F.css.map((f) => `<link rel="stylesheet" href="${pathToFileURL(f).href}">`).join('')}<style>
 :root {
   --u: ${u}px; --w: ${w}px; --h: ${h}px;
-  --pine: ${P.pine}; --moss: ${P.moss}; --sprout: ${P.sprout}; --pollen: ${P.pollen};
-  --marble: ${P.marble}; --mist: ${P.mist};
-  --bg: ${o.theme === 'dark' ? P.pineDeep : P.marble};
-  --fg: ${o.theme === 'dark' ? P.marbleOnDark : P.pine};
-  --muted: ${o.theme === 'dark' ? 'rgba(230,238,232,0.72)' : 'rgba(23,50,41,0.72)'};
-  --accent: ${o.theme === 'dark' ? P.mossOnDark : P.moss};
-  --line: ${o.theme === 'dark' ? 'rgba(230,238,232,0.16)' : 'rgba(23,50,41,0.14)'};
+  --primary: ${P.primary}; --on-primary: ${P.onPrimary}; --live: ${P.live}; --on-live: ${P.onLive};
+  --accent: ${P.accent}; --mint: ${P.mint}; --tint: ${P.tint}; --ink: ${P.ink};
+  --f-sans: ${F.sans}; --f-hand: ${F.hand}; --f-mono: ${F.mono};
+  --f-weight: ${F.displayWeight}; --f-track: ${F.tracking};
+  --bg: ${dark ? P.fg : P.bg};
+  --fg: ${dark ? P.bg : P.fg};
+  --muted: ${dark ? 'rgba(251,250,247,0.72)' : P.muted};
+  --link: ${dark ? P.linkOnDark : P.link};
+  --line: ${dark ? 'rgba(251,250,247,0.18)' : P.line};
   --pad: calc(var(--u) * ${shape === 'strip' ? 14 : shape === 'wide' ? 10 : 7});
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: var(--w); height: var(--h); overflow: hidden; }
-body { background: ${o.transparent ? 'transparent' : 'var(--bg)'}; color: var(--fg); font-family: 'Instrument', sans-serif; -webkit-font-smoothing: antialiased; }
+body { background: ${o.transparent ? 'transparent' : 'var(--bg)'}; color: var(--fg); font-family: var(--f-sans); -webkit-font-smoothing: antialiased; }
 .frame { position: relative; width: var(--w); height: var(--h); }
 .motif { position: absolute; inset: 0; -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 94%); mask-image: linear-gradient(to bottom, #000 72%, transparent 94%); }
 .content { position: absolute; inset: calc(${safe.y}px + var(--pad)) calc(${safe.x}px + var(--pad)); display: flex; flex-direction: column; gap: calc(var(--u) * 3); }
 .foot { position: absolute; left: calc(${safe.x}px + var(--pad)); right: calc(${safe.x}px + var(--pad)); bottom: calc(${safe.y}px + var(--pad) * 0.7);
-  display: flex; align-items: center; gap: calc(var(--u) * 1.6); font: 600 calc(var(--u) * 2.6)/1 'Instrument'; color: var(--fg); }
-.foot-mark svg { width: calc(var(--u) * 4); height: auto; display: block; }
+  display: flex; align-items: center; gap: calc(var(--u) * 1.6); font: 700 calc(var(--u) * 2.6)/1 var(--f-sans); color: var(--fg); }
+.foot-mark svg { width: calc(var(--u) * 3.6); height: auto; display: block; }
 .foot-handle { margin-left: auto; color: var(--muted); font-weight: 500; }
 .has-foot .content { bottom: calc(${safe.y}px + var(--pad) + var(--u) * 5); }
 
-h1, .display { font-family: 'Bricolage'; font-weight: 750; letter-spacing: -0.035em; line-height: 0.98; font-optical-sizing: auto; text-wrap: balance; }
+h1, .display { font-family: var(--f-sans); font-weight: var(--f-weight); letter-spacing: var(--f-track); line-height: 0.98; font-optical-sizing: auto; text-wrap: balance; }
 h1 { font-size: calc(var(--u) * 11); }
 .lede { font-size: calc(var(--u) * 3.6); line-height: 1.38; color: var(--muted); max-width: 34ch; text-wrap: pretty; }
 .grow { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: calc(var(--u) * 3); }
 .fit { overflow: hidden; }
+.hand { font: 600 calc(var(--u) * 4.4)/1 var(--f-hand); color: var(--link); }
+.squiggle { display: block; width: calc(var(--u) * 16); height: auto; flex: none; }
 
-.pill { align-self: flex-start; display: inline-flex; align-items: center; gap: calc(var(--u) * 1.2); padding: calc(var(--u) * 1.1) calc(var(--u) * 2.2);
-  border-radius: calc(var(--u) * 1.4); font: 650 calc(var(--u) * 2.8)/1 'Instrument'; background: var(--sprout); color: var(--pine); }
-.pill.pollen { background: var(--pollen); }
+/* Hap etiketler: varsayılan sarı, üzerinde lacivert metin. */
+.pill { align-self: flex-start; display: inline-flex; align-items: center; gap: calc(var(--u) * 1.2); padding: calc(var(--u) * 1.2) calc(var(--u) * 2.6);
+  border-radius: 999px; font: 700 calc(var(--u) * 2.8)/1 var(--f-sans); background: var(--primary); color: var(--on-primary); }
+.pill.live { background: var(--live); color: var(--on-live); }
+.pill.mentor { background: var(--link); color: ${dark ? P.fg : '#FFFFFF'}; }
 .pill.outline { background: transparent; border: calc(var(--u) * 0.25) solid var(--line); color: var(--fg); }
-.dot { width: calc(var(--u) * 1.5); height: calc(var(--u) * 1.5); border-radius: calc(var(--u) * 0.35); background: var(--pine); }
-.meta { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 1.4) calc(var(--u) * 4); font: 600 calc(var(--u) * 3.4)/1.2 'Instrument'; }
+.dot { width: calc(var(--u) * 1.5); height: calc(var(--u) * 1.5); border-radius: 50%; background: var(--on-live); }
+.meta { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 1.4) calc(var(--u) * 4); font: 700 calc(var(--u) * 3.4)/1.2 var(--f-sans); }
 .meta span { display: flex; flex-direction: column; gap: calc(var(--u) * 0.8); }
 .meta small { font-size: 0.66em; font-weight: 500; color: var(--muted); }
 

@@ -65,7 +65,7 @@ mkdirSync(tmp, { recursive: true });
 const browser = await chromium.launch();
 const pageObj = await browser.newPage();
 for (const [i, j] of jobs.entries()) {
-  // file:// üzerinden açıyoruz ki @font-face file:// URL'leri yüklenebilsin.
+  // file:// üzerinden açıyoruz ki node_modules'taki font CSS'leri (file:// URL) yüklenebilsin.
   const file = resolve(tmp, `job-${i}.html`);
   writeFileSync(file, j.html);
   await pageObj.setViewportSize({ width: j.w, height: j.h });
