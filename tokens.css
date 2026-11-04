@@ -1,20 +1,27 @@
-/* Koina marka token'ları. Kaynak: social/scripts/palette.ts — ikisini birlikte güncelle. */
+/* Koina marka token'ları. Kaynak: sitenin packages/shared/src/brand.ts dosyası;
+   social/scripts/palette.ts ile birlikte güncelle. */
 :root {
-  --koina-pine: #173229;
-  --koina-moss: #2f7a55;
-  --koina-sprout: #9ed9a8;
-  --koina-pollen: #f2b33d;
-  --koina-marble: #f2f5f1;
-  --koina-mist: #d5dfd8;
-  --koina-pine-deep: #0e1d18;
-  --koina-moss-on-dark: #4fb37e;
-  --koina-marble-on-dark: #e6eee8;
+  --koina-bg: #fbfaf7;
+  --koina-surface: #ffffff;
+  --koina-fg: #1b1f3b;
+  --koina-muted: #50567a;
+  --koina-primary: #ffd23f;
+  --koina-on-primary: #1b1f3b;
+  --koina-link: #3341c4;
+  --koina-accent: #ff7aa2;
+  --koina-live: #e5484d;
+  --koina-tint: #eceeff;
+  --koina-line: #e7e5ee;
+  --koina-mint: #9fe3c0;
+  --koina-ink: #11142a;
 
-  --koina-font-display: 'Bricolage Grotesque', system-ui, sans-serif;
-  --koina-font-body: 'Instrument Sans', system-ui, sans-serif;
+  /* Koyu tema */
+  --koina-dark-bg: #1b1f3b;
+  --koina-dark-fg: #fbfaf7;
+  --koina-link-on-dark: #8c97f0;
 
-  /* Hücre köşe oranı: boyutun %22'si. Türetilmiş yarıçaplar: */
-  --koina-radius-sm: 6px;
-  --koina-radius-md: 14px;
-  --koina-radius-lg: 22px;
+  --koina-font-sans: 'DM Sans', system-ui, sans-serif;
+  --koina-font-hand: 'Caveat', 'Comic Sans MS', cursive;
+  --koina-display-weight: 700;
+  --koina-display-tracking: -0.03em;
 }

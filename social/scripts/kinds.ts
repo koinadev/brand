@@ -1,47 +1,45 @@
 // Şablon türleri. Her tür `(data, size, theme) => html` döndürür; veri alanları README'de.
-import { readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { page, esc, hash, shapeOf, contributionStrip, registerCss, type Theme } from './templates.ts';
+import { page, esc, hash, shapeOf, contributionStrip, registerCss, squiggle, type Theme } from './templates.ts';
+import { palette as P, logoSvg } from './palette.ts';
 import type { Size } from './sizes.ts';
-
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const logo = (n: string) => readFileSync(resolve(root, 'brand/logo', n), 'utf8');
 
 type Ctx = { size: Size; theme: Theme };
 type Kind<D> = (d: D, c: Ctx) => string;
 
 registerCss(`
+/* Alıntı işareti: logodaki gibi noktalar (pembe, mavi, sarı). */
 .quote-mark { display: grid; grid-template-columns: repeat(2, calc(var(--u) * 3.4)); gap: calc(var(--u) * 0.8); }
-.quote-mark i { aspect-ratio: 1; border-radius: calc(var(--u) * 0.75); background: var(--pollen); }
+.quote-mark i { aspect-ratio: 1; border-radius: 50%; background: var(--accent); }
+.quote-mark i:nth-child(2) { background: var(--link); }
 .quote-mark i:nth-child(3) { background: transparent; }
-blockquote { font-family: 'Bricolage'; font-weight: 600; letter-spacing: -0.025em; line-height: 1.08; font-size: calc(var(--u) * 7.4); text-wrap: balance; }
-.who { display: flex; align-items: center; gap: calc(var(--u) * 2.4); font: 600 calc(var(--u) * 3.6)/1.2 'Instrument'; }
-.who small { display: block; font-weight: 500; font-size: 0.8em; color: var(--muted); margin-top: calc(var(--u) * 0.6); }
+.quote-mark i:nth-child(4) { background: var(--primary); }
+blockquote { font-family: var(--f-sans); font-weight: var(--f-weight); letter-spacing: -0.025em; line-height: 1.1; font-size: calc(var(--u) * 7.2); text-wrap: balance; }
+.who { display: flex; align-items: center; gap: calc(var(--u) * 2.4); font: 700 calc(var(--u) * 3.6)/1.2 var(--f-sans); }
+.who small { display: block; font-weight: 400; font-size: 0.8em; color: var(--muted); margin-top: calc(var(--u) * 0.6); }
 
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(var(--u) * 3); border-top: calc(var(--u) * 0.25) solid var(--line); padding-top: calc(var(--u) * 3.4); }
-.stats b { display: block; font: 750 calc(var(--u) * 10)/0.95 'Bricolage'; letter-spacing: -0.04em; }
+.stats b { display: block; font: var(--f-weight) calc(var(--u) * 10)/0.95 var(--f-sans); letter-spacing: var(--f-track); }
 .stats span { display: block; margin-top: calc(var(--u) * 1.2); font-size: calc(var(--u) * 2.9); line-height: 1.3; color: var(--muted); }
 .strip-wrap .strip-grid { display: block; }
 
-.code { background: var(--pine); color: #E6EEE8; border-radius: calc(var(--u) * 2.4); padding: calc(var(--u) * 3.4) calc(var(--u) * 3.8);
-  font: 500 calc(var(--u) * 3.1)/1.55 ui-monospace, 'SF Mono', Menlo, monospace; white-space: pre; overflow: hidden; }
-.dark .code, .code.on-dark { background: #050d0a; }
-.code .c { color: #8FB5A1; } .code .k { color: var(--pollen); } .code .s { color: var(--sprout); }
+/* Kod bloğu her iki temada da en koyu mürekkep yüzeyinde. */
+.code { background: var(--ink); color: ${P.bg}; border-radius: calc(var(--u) * 2.4); padding: calc(var(--u) * 3.4) calc(var(--u) * 3.8);
+  font: 500 calc(var(--u) * 3.1)/1.55 var(--f-mono); white-space: pre; overflow: hidden; }
+.code .c { color: rgba(251,250,247,0.5); } .code .k { color: var(--primary); } .code .s { color: ${P.linkOnDark}; }
 
-.counter { font: 700 calc(var(--u) * 3.2)/1 'Instrument'; color: var(--muted); }
+.counter { font: 700 calc(var(--u) * 3.2)/1 var(--f-sans); color: var(--muted); }
 .counter b { color: var(--fg); }
 .card-body { font-size: calc(var(--u) * 4.1); line-height: 1.45; max-width: 30ch; text-wrap: pretty; }
 
 .banner { position: absolute; inset: 0; display: flex; align-items: center; }
 .banner .wm svg { height: 100%; width: auto; display: block; }
-.banner .tag { font: 600 var(--tag-size)/1.15 'Bricolage'; letter-spacing: -0.02em; color: var(--fg); }
+.banner .tag { font: 500 var(--tag-size)/1.2 var(--f-sans); letter-spacing: -0.015em; color: var(--fg); }
 
 .lower { position: absolute; left: calc(var(--u) * 6); bottom: calc(var(--u) * 7); display: flex; align-items: stretch; border-radius: calc(var(--u) * 1.6); overflow: hidden; }
-.lower .tab { width: calc(var(--u) * 1.6); background: var(--pollen); }
-.lower .txt { background: var(--pine); color: #E6EEE8; padding: calc(var(--u) * 2) calc(var(--u) * 3.2); }
-.lower .txt b { display: block; font: 700 calc(var(--u) * 4.2)/1.05 'Bricolage'; letter-spacing: -0.02em; }
-.lower .txt span { display: block; margin-top: calc(var(--u) * 0.8); font: 500 calc(var(--u) * 2.4)/1.2 'Instrument'; color: rgba(230,238,232,0.75); }
+.lower .tab { width: calc(var(--u) * 1.6); background: var(--primary); }
+.lower .txt { background: ${P.fg}; color: ${P.bg}; padding: calc(var(--u) * 2) calc(var(--u) * 3.2); }
+.lower .txt b { display: block; font: 700 calc(var(--u) * 4.2)/1.05 var(--f-sans); letter-spacing: -0.02em; }
+.lower .txt span { display: block; margin-top: calc(var(--u) * 0.8); font: 500 calc(var(--u) * 2.4)/1.2 var(--f-sans); color: rgba(251,250,247,0.75); }
 `);
 
 // ------------------------------------------------------------------ duyuru
@@ -57,7 +55,7 @@ export const announce: Kind<AnnounceData> = (d, { size, theme }) => {
     footer: !flat,
     body: `<div class="content">
       ${d.badge ? `<span class="pill">${esc(d.badge)}</span>` : ''}
-      <div class="grow fit"><h1 data-fit>${esc(d.title)}</h1>
+      <div class="grow fit"><h1 data-fit>${esc(d.title)}</h1>${flat ? '' : squiggle()}
       ${d.body && !flat ? `<p class="lede">${esc(d.body)}</p>` : ''}</div>
       ${d.meta?.length ? `<div class="meta">${d.meta.map((m) => `<span><small>${esc(m.label)}</small>${esc(m.value)}</span>`).join('')}</div>` : ''}
     </div>`,
@@ -72,10 +70,11 @@ export const live: Kind<LiveData> = (d, { size, theme }) =>
     size,
     theme,
     seed: hash(d.title + d.date),
-    motif: { focus: [1, 0.05] },
+    // Geniş formatlarda motif sağ üstte kalır; başlığın arkası sakin olsun.
+    motif: ['wide', 'strip'].includes(shapeOf(size)) ? { focus: [1, 0.05], spread: 1.1 } : { focus: [1, 0.05] },
     body: `<div class="content">
       <div style="display:flex;gap:calc(var(--u)*1.4);flex-wrap:wrap">
-        <span class="pill pollen"><i class="dot"></i>Canlı</span>
+        <span class="pill live"><i class="dot"></i>Canlı</span>
         <span class="pill outline">${esc(d.format)}</span>
       </div>
       <div class="grow fit"><h1 data-fit>${esc(d.title)}</h1></div>
@@ -100,7 +99,7 @@ export const quote: Kind<QuoteData> = (d, { size, theme }) =>
     body: `<div class="content">
       <div class="quote-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
       <div class="grow fit" style="justify-content:flex-start"><blockquote data-fit>${esc(d.quote)}</blockquote></div>
-      <div class="who"><span class="pill ${d.role === 'Usta' ? 'pollen' : ''}">${esc(d.role)}</span>
+      <div class="who"><span class="pill ${d.role === 'Usta' ? 'mentor' : ''}">${esc(d.role)}</span>
         <div>${esc(d.name)}${d.project ? `<small>${esc(d.project)}</small>` : ''}</div></div>
     </div>`,
   });
@@ -142,10 +141,11 @@ export const code: Kind<CodeData> = (d, { size, theme }) =>
     size,
     theme,
     seed: hash(d.code),
-    motif: { focus: [1, 0], spread: 0.5 },
+    // Başlık tam genişlikte; motif boş kalan sağ alt köşeye.
+    motif: { focus: [1, 1], spread: 0.5 },
     body: `<div class="content">
       <div class="fit" style="flex:0 1 auto"><h1 data-fit style="font-size:calc(var(--u)*7.2)">${esc(d.title)}</h1></div>
-      <div class="code ${theme === 'dark' ? 'on-dark' : ''}">${highlight(d.code)}</div>
+      <div class="code">${highlight(d.code)}</div>
       ${d.caption ? `<p class="lede">${esc(d.caption)}</p>` : ''}
     </div>`,
   });
@@ -166,8 +166,8 @@ export function carousel(d: CarouselData, c: Ctx): string[] {
     ...c,
     seed: hash(d.title),
     body: `<div class="content">${counter(1)}
-      <div class="grow fit"><h1 data-fit>${esc(d.title)}</h1>${d.subtitle ? `<p class="lede">${esc(d.subtitle)}</p>` : ''}</div>
-      <span class="lede" style="font-size:calc(var(--u)*3)">Kaydır</span></div>`,
+      <div class="grow fit"><h1 data-fit>${esc(d.title)}</h1>${squiggle()}${d.subtitle ? `<p class="lede">${esc(d.subtitle)}</p>` : ''}</div>
+      <span class="hand">kaydır →</span></div>`,
   });
   const cards = d.cards.map((card, i) =>
     page({
@@ -198,15 +198,19 @@ export const banner: Kind<BannerData> = (d, { size, theme }) => {
   const flat = ['strip', 'wide'].includes(shapeOf(size));
   // Şerit kapaklarda motif sağ yarıyı doldurur; 16:9 kapaklarda yalnız sağ üst köşede kalır ki
   // ortadaki güvenli alan (YouTube'da 1546×423) temiz kalsın.
-  const wmH = Math.round(innerH * (flat ? 0.34 : safe.y ? 0.34 : 0.2));
-  const wm = theme === 'dark' ? logo('koina-wordmark-solid.svg').replace(/#173229/g, '#E6EEE8') : logo('koina-wordmark-solid.svg');
+  // `koina.dev` logotipi eski `koina`dan ~1,5 kat geniş; yükseklik ona göre küçük tutulur ki
+  // logo + slogan aynı genişliğe sığsın.
+  const wmH = Math.round(innerH * (flat ? 0.24 : safe.y ? 0.24 : 0.14));
+  // Hazır wordmark dosyası; koyu zeminde inverse varyant.
+  const wm = logoSvg('wordmark', theme === 'dark');
   return page({
     size,
     theme,
     seed: hash(d.tagline),
     footer: false,
-    motif: flat ? { focus: [1, 0.5], spread: 2.4 } : { focus: [1, 0], spread: 0.62 },
-    body: `<div class="banner" style="padding:${safe.y}px calc(${safe.x}px + var(--h) * 0.1);gap:${Math.round(wmH * 0.7)}px;--tag-size:${Math.round(wmH * (flat ? 0.42 : 0.34))}px">
+    // Şerit kapaklarda motif yalnız sağ uçta kalır; yazı temiz zemine düşer.
+    motif: flat ? { focus: [1, 0.5], spread: 1.25 } : { focus: [1, 0], spread: 0.62 },
+    body: `<div class="banner" style="padding:${safe.y}px calc(${safe.x}px + var(--h) * 0.1);gap:${Math.round(wmH)}px;--tag-size:${Math.round(wmH * (flat ? 0.6 : 0.48))}px">
       <div class="wm" style="height:${wmH}px">${wm}</div>
       <div class="tag" style="max-width:${Math.round(flat ? size.w * 0.3 : (size.w - safe.x * 2) * 0.42)}px">${esc(d.tagline)}</div></div>`,
   });
@@ -215,11 +219,7 @@ export const banner: Kind<BannerData> = (d, { size, theme }) => {
 // ------------------------------------------------------------------ avatar
 
 export const avatar: Kind<Record<string, never>> = (_d, { size, theme }) => {
-  // Koyu zeminde favicon ile aynı renkler: gövde filiz, boş hücreler soluk.
-  const mark =
-    theme === 'dark'
-      ? logo('koina-mark.svg').replace(/#D5DFD8/g, 'rgba(230,238,232,0.12)').replace(/#2F7A55/g, '#9ED9A8')
-      : logo('koina-mark-solid.svg');
+  const mark = logoSvg('mark', theme === 'dark');
   return page({
     size,
     theme,
@@ -242,7 +242,7 @@ export const stream: Kind<StreamData> = (d, { size, theme }) =>
     seed: hash(d.state + d.title),
     motif: { focus: [1, 0.5], spread: 0.9 },
     body: `<div class="content" style="justify-content:center;right:45%">
-      <span class="pill ${d.state === 'starting' ? 'pollen' : 'outline'}">${streamCopy[d.state]}</span>
+      <span class="pill ${d.state === 'starting' ? '' : 'outline'}">${streamCopy[d.state]}</span>
       <div class="fit" style="flex:0 1 auto"><h1 data-fit>${esc(d.title)}</h1></div>
       ${d.subtitle ? `<p class="lede">${esc(d.subtitle)}</p>` : ''}</div>`,
   });
