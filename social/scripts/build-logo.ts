@@ -1,5 +1,5 @@
 // Koina logo üreticisi. Tek kaynak: aşağıdaki işaret tanımı + DM Sans Bold.
-// Çıktı: ../brand/logo/*.svg ve sitenin apps/web/public/ klasörüne favicon + logo.
+// Çıktı: ../logo/*.svg ve sitenin apps/web/public/ klasörüne favicon + logo.
 // Yazı SVG içinde <text> olarak değil PATH olarak gömülür; logo hiçbir yerde font beklemez.
 import opentype from 'opentype.js';
 import { mkdirSync, readFileSync, writeFileSync, copyFileSync } from 'node:fs';
@@ -7,7 +7,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const outDir = resolve(root, 'brand/logo');
+const outDir = resolve(root, 'logo');
 mkdirSync(outDir, { recursive: true });
 
 // İşaret: uzun bir hap (K'nın gövdesi) ve üç nokta (bir araya gelen insanlar, imece).
@@ -104,7 +104,7 @@ const files: Record<string, string> = {
 
 for (const [name, content] of Object.entries(files)) writeFileSync(resolve(outDir, name), content);
 
-const sitePublic = resolve(root, 'site/apps/web/public');
+const sitePublic = resolve(root, '../site/apps/web/public');
 copyFileSync(resolve(outDir, 'favicon.svg'), resolve(sitePublic, 'favicon.svg'));
 copyFileSync(resolve(outDir, 'koina-mark.svg'), resolve(sitePublic, 'logo.svg'));
 

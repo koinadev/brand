@@ -51,13 +51,13 @@ export const fonts = {
 type LogoName = 'mark' | 'wordmark';
 
 /**
- * Hazır logo dosyası (`brand/logo/`). Koyu zeminde inverse varyant kullanılır; inverse
+ * Hazır logo dosyası (`logo/`). Koyu zeminde inverse varyant kullanılır; inverse
  * dosyalardaki lacivert arka plan kutusu çıkarılır ve viewBox işaretin kendisine daraltılır,
  * böylece iki varyant da aynı oranda ölçeklenir.
  */
 export function logoSvg(name: LogoName, dark = false) {
   const file = `koina-${name}${dark ? '-inverse' : ''}.svg`;
-  let svg = readFileSync(resolve(root, 'brand/logo', file), 'utf8')
+  let svg = readFileSync(resolve(root, 'logo', file), 'utf8')
     .trim()
     .replace(/<title>.*?<\/title>/, '')
     .replace(/ width="\d+" height="\d+"/, '');

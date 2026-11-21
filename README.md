@@ -1,6 +1,6 @@
 # Koina marka kiti
 
-Kararların gerekçesi: [`../plan/01-marka.md`](../plan/01-marka.md).
+Kararların gerekçesi: `plan/01-marka.md` (koinadev/koina-plan, gizli).
 
 ## İşaret
 
@@ -16,7 +16,7 @@ bir araya gelen insanlar, yani imece. Formu sitenin hap butonları ve yuvarlak r
 | `logo/koina-wordmark-mono.svg` | Tek renk baskı; `currentColor` kullanır |
 | `logo/koina-mark*.svg` | Yalnız işaret |
 | `logo/favicon.svg` | Favicon, uygulama ikonu (sarı zemin) |
-| `../social/out/profile/avatar-*.png` | Sosyal profil fotoğrafları (800×800, daire güvenli) |
+| `social/out/profile/avatar-*.png` | Sosyal profil fotoğrafları (800×800, daire güvenli) |
 
 ## Yazı tipleri
 

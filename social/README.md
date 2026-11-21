@@ -6,7 +6,7 @@ HTML şablonları Playwright (Chromium) ile PNG'ye çevirir. Tüm boyutlar, tüm
 bun install
 bun run render                      # specs.ts içindeki her şey → out/<grup>/<ad>.png
 bun run render -- --only live       # yalnız bir grup ya da ad
-bun run logo                        # logoları yeniden üret (../brand/logo)
+bun run logo                        # logoları yeniden üret (../logo)
 ```
 
 Tek seferlik görsel (specs.ts'e eklemeden):
