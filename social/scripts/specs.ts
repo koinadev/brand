@@ -51,6 +51,11 @@ export const specs: Spec[] = [
   },
 
   // ---- canlı yayın
+  // ---- yayın başlıyor (sunucu fotoğraflı; fotoğraf: assets/host.jpg)
+  ...(['ig-square', 'story', 'x-post', 'linkedin-square'] as const).map((size): Spec => ({
+    group: 'basliyor', name: size, kind: 'live', size, theme: 'dark',
+    data: { ...live, badge: 'Yayın başlıyor', title: 'Birazdan canlıdayız', date: 'Bu akşam', platform: 'youtube.com/@koinadev', photo: 'assets/host.jpg', host: 'Furkan Çolak', hostRole: 'Sunucu · koinadev' },
+  })),
   { group: 'live', name: 'ig-square', kind: 'live', size: 'ig-square', theme: 'dark', data: live },
   { group: 'live', name: 'story', kind: 'live', size: 'story', theme: 'dark', data: { ...live, platform: 'YouTube + Twitch' } },
   { group: 'live', name: 'x-post', kind: 'live', size: 'x-post', data: live },

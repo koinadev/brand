@@ -31,6 +31,11 @@ blockquote { font-family: var(--f-sans); font-weight: var(--f-weight); letter-sp
 .counter b { color: var(--fg); }
 .card-body { font-size: calc(var(--u) * 4.1); line-height: 1.45; max-width: 30ch; text-wrap: pretty; }
 
+.host { display: flex; align-items: center; gap: calc(var(--u) * 3); }
+.host img { width: calc(var(--u) * var(--img, 24)); aspect-ratio: 1; object-fit: cover; object-position: 50% 20%; border-radius: 50%; border: calc(var(--u) * 0.6) solid var(--primary); }
+.host b { display: block; font: 700 calc(var(--u) * 4.4)/1.1 var(--f-sans); letter-spacing: -0.02em; }
+.host small { display: block; margin-top: calc(var(--u) * 0.8); font: 500 calc(var(--u) * 2.9)/1.2 var(--f-sans); color: var(--muted); }
+
 .banner { position: absolute; inset: 0; display: flex; align-items: center; }
 .banner .wm svg { height: 100%; width: auto; display: block; }
 .banner .tag { font: 500 var(--tag-size)/1.15 var(--f-sans); letter-spacing: -0.02em; color: var(--fg); text-wrap: balance; overflow-wrap: break-word; }
@@ -64,7 +69,8 @@ export const announce: Kind<AnnounceData> = (d, { size, theme }) => {
 
 // ------------------------------------------------------------------ canlı yayın
 
-export type LiveData = { format: string; title: string; guest?: string; role?: string; date: string; time: string; platform?: string };
+// `photo`: social/ köküne göre görsel yolu (ör. assets/host.jpg); `host`: fotoğrafın altındaki ad. `badge`: kırmızı rozetin metni.
+export type LiveData = { format: string; title: string; guest?: string; role?: string; date: string; time: string; platform?: string; photo?: string; host?: string; hostRole?: string; badge?: string };
 export const live: Kind<LiveData> = (d, { size, theme }) =>
   page({
     size,
@@ -74,9 +80,10 @@ export const live: Kind<LiveData> = (d, { size, theme }) =>
     motif: ['wide', 'strip'].includes(shapeOf(size)) ? { focus: [1, 0.05], spread: 1.1 } : { focus: [1, 0.05] },
     body: `<div class="content">
       <div style="display:flex;gap:calc(var(--u)*1.4);flex-wrap:wrap">
-        <span class="pill live"><i class="dot"></i>Canlı</span>
+        <span class="pill live"><i class="dot"></i>${esc(d.badge ?? 'Canlı')}</span>
         <span class="pill outline">${esc(d.format)}</span>
       </div>
+      ${d.photo ? `<div class="host" style="${shapeOf(size) === 'tall' ? 'flex-direction:column;align-items:flex-start;--img:44' : ''}"><img src="${new URL(`../${d.photo}`, import.meta.url).href}" alt=""><span><b>${esc(d.host ?? '')}</b>${d.hostRole ? `<small>${esc(d.hostRole)}</small>` : ''}</span></div>` : ''}
       <div class="grow fit"><h1 data-fit>${esc(d.title)}</h1></div>
       <div class="meta">
         ${d.guest ? `<span><small>${esc(d.role ?? 'Konuk')}</small>${esc(d.guest)}</span>` : ''}
@@ -116,6 +123,7 @@ export const stats: Kind<StatsData> = (d, { size, theme }) => {
     motif: false,
     body: `<div class="content">
       <span class="pill outline">${esc(d.period)}</span>
+      ${d.photo ? `<div class="host" style="${shapeOf(size) === 'tall' ? 'flex-direction:column;align-items:flex-start;--img:44' : ''}"><img src="${new URL(`../${d.photo}`, import.meta.url).href}" alt=""><span><b>${esc(d.host ?? '')}</b>${d.hostRole ? `<small>${esc(d.hostRole)}</small>` : ''}</span></div>` : ''}
       <div class="grow fit"><h1 data-fit>${esc(d.title)}</h1></div>
       ${d.days ? `<div class="strip-wrap">${contributionStrip(d.days, Math.round(u * 2.6), theme)}</div>` : ''}
       <div class="stats">${d.items
