@@ -33,7 +33,7 @@ blockquote { font-family: var(--f-sans); font-weight: var(--f-weight); letter-sp
 
 .banner { position: absolute; inset: 0; display: flex; align-items: center; }
 .banner .wm svg { height: 100%; width: auto; display: block; }
-.banner .tag { font: 500 var(--tag-size)/1.2 var(--f-sans); letter-spacing: -0.015em; color: var(--fg); }
+.banner .tag { font: 500 var(--tag-size)/1.15 var(--f-sans); letter-spacing: -0.02em; color: var(--fg); text-wrap: balance; overflow-wrap: break-word; }
 
 .lower { position: absolute; left: calc(var(--u) * 6); bottom: calc(var(--u) * 7); display: flex; align-items: stretch; border-radius: calc(var(--u) * 1.6); overflow: hidden; }
 .lower .tab { width: calc(var(--u) * 1.6); background: var(--primary); }
@@ -191,17 +191,18 @@ export function carousel(d: CarouselData, c: Ctx): string[] {
 
 // ------------------------------------------------------------------ profil kapakları (banner)
 
-// `align: 'end'`: profil fotoğrafının sol alt köşeye bindiği kapaklarda (X, LinkedIn) logo ve slogan sağa, motif sola geçer.
+// Slogan ana öğe; `koina.dev` logotipi küçük, sağ altta imza gibi durur (profil adı zaten logoyu gösteriyor).
+// `align: 'end'`: profil fotoğrafının sol alt köşeye bindiği kapaklarda (X, LinkedIn) slogan sağa, motif sola geçer.
 export type BannerData = { tagline: string; align?: 'end' };
 export const banner: Kind<BannerData> = (d, { size, theme }) => {
   const safe = size.safe ?? { x: 0, y: 0 };
+  const innerW = size.w - safe.x * 2;
   const innerH = size.h - safe.y * 2;
-  const flat = ['strip', 'wide'].includes(shapeOf(size));
-  // Şerit kapaklarda motif sağ yarıyı doldurur; 16:9 kapaklarda yalnız sağ üst köşede kalır ki
-  // ortadaki güvenli alan (YouTube'da 1546×423) temiz kalsın.
-  // `koina.dev` logotipi eski `koina`dan ~1,5 kat geniş; yükseklik ona göre küçük tutulur ki
-  // logo + slogan aynı genişliğe sığsın.
-  const wmH = Math.round(innerH * (flat ? 0.24 : safe.y ? 0.24 : 0.14));
+  const shape = shapeOf(size);
+  const flat = ['strip', 'wide'].includes(shape);
+  const pad = Math.round(Math.min(innerH * 0.14, innerW * 0.04));
+  const tagSize = Math.round(innerH * (flat ? 0.15 : safe.y ? 0.2 : 0.09));
+  const wmH = Math.max(18, Math.round(innerH * (flat ? 0.08 : safe.y ? 0.1 : 0.045)));
   // Hazır wordmark dosyası; koyu zeminde inverse varyant.
   const wm = logoSvg('wordmark', theme === 'dark');
   return page({
@@ -209,11 +210,11 @@ export const banner: Kind<BannerData> = (d, { size, theme }) => {
     theme,
     seed: hash(d.tagline),
     footer: false,
-    // Şerit kapaklarda motif yalnız sağ uçta kalır; yazı temiz zemine düşer.
-    motif: d.align === 'end' ? { focus: [0, 0.5], spread: shapeOf(size) === 'strip' ? 1.25 : 0.75 } : flat ? { focus: [1, 0.5], spread: 1.25 } : { focus: [1, 0], spread: 0.62 },
-    body: `<div class="banner" style="${d.align === 'end' ? 'justify-content:flex-end;' : ''}padding:${safe.y}px calc(${safe.x}px + var(--h) * 0.1);gap:${Math.round(wmH)}px;--tag-size:${Math.round(wmH * (flat ? 0.6 : 0.48))}px">
-      <div class="wm" style="height:${wmH}px">${wm}</div>
-      <div class="tag" style="max-width:${Math.round(flat ? size.w * 0.3 : (size.w - safe.x * 2) * 0.42)}px">${esc(d.tagline)}</div></div>`,
+    // Motif yazının karşı tarafında kalır ki slogan temiz zemine düşsün; 16:9 kapaklarda yalnız sağ üst köşede.
+    motif: d.align === 'end' ? { focus: [0, 0.5], spread: shape === 'strip' ? 1.25 : 0.75 } : flat ? { focus: [1, 0.5], spread: 1.25 } : { focus: [1, 0], spread: 0.62 },
+    body: `<div class="banner" style="inset:${safe.y}px ${safe.x}px;padding:${pad}px ${pad}px ${pad + wmH}px;${d.align === 'end' ? 'justify-content:flex-end;' : ''}--tag-size:${tagSize}px">
+      <div class="tag" style="max-width:${Math.round(innerW * (d.align === 'end' ? 0.55 : 0.6))}px">${esc(d.tagline)}</div>
+      <div class="wm" style="position:absolute;right:${pad}px;bottom:${Math.round(pad * 0.7)}px;height:${wmH}px">${wm}</div></div>`,
   });
 };
 
